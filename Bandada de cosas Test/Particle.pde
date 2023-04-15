@@ -1,4 +1,3 @@
-
 class Particle
 {
   PVector pos;
@@ -12,6 +11,7 @@ class Particle
   float KD;
   color color_p;
 
+  float maxSpeed = 100;
   Particle(PVector _pos, PVector _velocity, float _weight, float _size, color _color, float _KB, float _KD)
   {
     pos =_pos;
@@ -27,16 +27,12 @@ class Particle
 
   void Move(PVector destPos)
   {
-    PVector strenght;
-    PVector accel;
-    PVector dest;
+    PVector strenght= new PVector(0.0, 0.0, 0.0);
+    PVector accel = new PVector(0.0, 0.0, 0.0);
+    PVector dest = new PVector(0.0, 0.0, 0.0);
     //Flock es bandada
-    PVector flock;
-
-    strenght = new PVector(0.0, 0.0, 0.0);
-    accel = new PVector(0.0, 0.0, 0.0);
-    dest = new PVector(0.0, 0.0, 0.0);
-    flock = new PVector(0.0, 0.0, 0.0);
+    PVector flock = new PVector(0.0, 0.0, 0.0);
+    PVector velocity = new PVector(0.0, 0.0, 0.0);
 
     dest = UnitaryVector(pos, destPos);
     flock = UnitaryVector(pos, FlockCenter());
@@ -44,7 +40,7 @@ class Particle
     strenght.x = KD * dest.x + KB * flock.x;
     strenght.y = KD * dest.y + KB * flock.y;
     strenght.z = KD * dest.z + KB * flock.z;
-    
+
     accel.x = strenght.x/weight;
     accel.y = strenght.y/weight;
     accel.z = strenght.z/weight;
@@ -53,33 +49,28 @@ class Particle
     vel.y = vel.y + accel.y * deltaTime;
     vel.z = vel.z + accel.z * deltaTime;
 
+    if (vel.x > maxSpeed)
+      vel.x = maxSpeed;
+    if (vel.y > maxSpeed)
+      vel.y = maxSpeed;
+    if (vel.z > maxSpeed)
+      vel.z = maxSpeed;
+
     pos.x = pos.x + vel.x * deltaTime;
     pos.y = pos.y + vel.y * deltaTime;
     pos.z = pos.z + vel.z * deltaTime;
-
-    /*if (pos.x > width - size)
-    {
-      pos.x = width - size;
-    } else if (pos.x < size)
-    {
-      pos.x = size;
-    }
-
-    if (pos.y > height - size)
-    {
-      pos.y = height - size;
-    } else if (pos.y < size)
-    {
-      pos.y = size;
-    }*/
   }
+
+  void CheckCollision()
+  {
+  }
+
 
   void Draw()
   {
     pushMatrix();
-    noFill();
-    strokeWeight(1);
-    stroke(color_p);
+    fill(color_p);
+    noStroke();
     translate(pos.x, pos.y, pos.z);
     sphere(size);
     popMatrix();
