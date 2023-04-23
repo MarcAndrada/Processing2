@@ -7,8 +7,7 @@ float deltaTime = 0.04;
 PVector posDest;
 float flockDestinyOffset = 30;
 
-enum Solver{EULER, VERLET};
-Solver currentSolver = Solver.EULER;
+boolean isVerlet = false;
 //SETUP FUNCTIONS
 void setup()
 {
@@ -35,7 +34,7 @@ void InitializeParticles()
   colorArr[6] = color(255, 255, 255); //Blanco
 
   //Le seteamos los valores al lider
-  particleArr[0] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), 40, 3f, 60f, colorArr[0], 0.1f, 10);
+  particleArr[0] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), 5f, 60f, colorArr[0], 0.1f, 10, true);
   leader = particleArr[0];
 
   for (int i = 1; i < avatarNum; i++)
@@ -46,7 +45,7 @@ void InitializeParticles()
     float randomKD = random(4, 10);
     println(i + " ---- KB = " + randomKB + " y el KD = " + randomKD);
     //Y creamos cada particula con sus valores
-    particleArr[i] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), random(70, 100), 0.7f, 30f, colorArr[i], randomKB, randomKD);
+    particleArr[i] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), random(0.4f, 1.2f), 30f, colorArr[i], randomKB, randomKD, false);
   }
 }
 
@@ -71,6 +70,7 @@ void draw()
   CollidersBehaviour();
   AvatarBehaviour();
   CameraBehaviour();
+  DrawUI();
 }
 
 void CheckIfFlockIsInCenter()
@@ -79,7 +79,6 @@ void CheckIfFlockIsInCenter()
     && FlockCenter().y - posDest.y <= flockDestinyOffset && FlockCenter().y - posDest.y >= -flockDestinyOffset
     && FlockCenter().z - posDest.z <= flockDestinyOffset && FlockCenter().z - posDest.z >= -flockDestinyOffset)
   {
-    println("QUIERO SEXOOOOO");
     //Generar una nueva posicion para el destino
     posDest = new PVector(random(0, 1000), random(0, 1000), 100);
   }
@@ -97,12 +96,12 @@ void AvatarBehaviour()
 {
   for (int i = 0; i < avatarNum; i++)
   {
-    if (i == 0)
+    if (particleArr[i].isLeader)
     {
-      particleArr[i].Move(posDest, collidersArr);
+      particleArr[i].Move(posDest);
     } else
     {
-      particleArr[i].Move(leader.pos, collidersArr);
+      particleArr[i].Move(leader.pos);
     }
 
     particleArr[i].Draw();
@@ -137,7 +136,23 @@ void DrawScenari(PVector _dir)
   popMatrix();
 }
 
-
+void DrawUI()
+{
+  //Dibujamos un texto con los Controles
+  text("Flecha : [ARRIBA],[ABAJO] : Mirar Arriba/Abajo", 10, 20);
+  text("Flecha : [LEFT],[RIGHT] : Mirar Izquierda/Derecha", 10, 35);
+  text("[W],[S] : Moverse Adelante/Atras", 10, 50);
+  text("[A],[D] : Moverse Iquierda/Derecha", 10, 65 );
+  text("[Q],[E] : Moverse Abajo/Arriba", 10, 80 );
+  text("[V] : Cambiar el Solver", 10, 95);
+  if (isVerlet)
+  {
+    text("Solver actual : Verlet", 10, 110);
+  } else
+  {
+    text("Solver actual : Euler", 10, 110);
+  }
+}
 
 //MATH FUNCTIONS
 PVector UnitaryVector(PVector start, PVector end)
@@ -182,7 +197,105 @@ PVector FlockCenter()
 
 void keyPressed()
 {
-  
+  if ( key == 'w' ) {
+    camMovingForward = true;
+  }
 
+  if ( key == 's' ) {
+    camMovingBack = true;
+  }
+
+  if ( key == 'a' ) {
+    camMovingLeft = true;
+  }
+
+  if ( key == 'd' ) {
+    camMovingRight = true;
+  }
+
+
+  if ( key == 'e' ) {
+    camMovingDown = true;
+  }
+
+  if ( key == 'q' ) {
+    camMovingUp = true;
+  }
+
+
+  if ( keyCode == PConstants.UP ) {
+    camRotatingUp = true;
+  }
+
+  if ( keyCode == PConstants.DOWN ) {
+    camRotatingDown = true;
+  }
+
+  if ( keyCode == PConstants.RIGHT ) {
+    camRotatingRight = true;
+  }
+
+  if ( keyCode == PConstants.LEFT ) {
+    camRotatingLeft = true;
+  }
 }
 
+void keyReleased()
+{
+  if ( key == 'w' ) {
+    camMovingForward = false;
+  }
+
+  if ( key == 's' ) {
+    camMovingBack = false;
+  }
+
+  if ( key == 'a' ) {
+    camMovingLeft = false;
+  }
+
+  if ( key == 'd' ) {
+    camMovingRight = false;
+  }
+
+
+  if ( key == 'e' ) {
+    camMovingDown = false;
+  }
+  if ( key == 'q' ) {
+    camMovingUp = false;
+  }
+
+
+  if ( keyCode == PConstants.UP ) {
+    camRotatingUp = false;
+  }
+
+  if ( keyCode == PConstants.DOWN ) {
+    camRotatingDown = false;
+  }
+
+  if ( keyCode == PConstants.RIGHT ) {
+    camRotatingRight = false;
+  }
+
+  if ( keyCode == PConstants.LEFT ) {
+    camRotatingLeft = false;
+  }
+
+  if (key == 'v')
+  {
+    if (isVerlet)
+    {
+      isVerlet = false;
+    } 
+    else
+    {
+      isVerlet = true;
+      for (int i = 0; i < avatarNum; i++)
+      {
+        particleArr[i].verletLastPos = particleArr[i].pos;
+      }
+    }
+  }
+}

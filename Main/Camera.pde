@@ -14,13 +14,6 @@ void CameraBehaviour() {
   //Variables de velocidad de movimiento y de rotacion de la cammara
   float camSpeed = 4, camRotSpeed = 0.01;
 
-  //Dibujamos un texto con los Controles
-  text("Flecha : [ARRIBA],[ABAJO] : Mirar Arriba/Abajo", 10, 20);
-  text("Flecha : [LEFT],[RIGHT] : Mirar Izquierda/Derecha", 10, 35);
-  text("[W],[S] : Moverse Adelante/Atras", 10, 50);
-  text("[A],[D] : Moverse Iquierda/Derecha", 10, 65 );
-  text("[Q],[E] : Moverse Abajo/Arriba", 10, 80 );
-
   PMatrix3D M = new PMatrix3D();
 
   if (camMovingForward) {
