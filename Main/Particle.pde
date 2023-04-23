@@ -10,9 +10,14 @@ class Particle
   float KB;
   // KD de acercamiento a la meta
   float KD;
-  //KC separacion de las colisiones
+  // KC separacion de las colisiones
   float KC;
+  // Fuerza constante del damping
+  float dampingForce;
   color color_p;
+
+  PVector verletLastPos;
+
 
   float maxSpeed;
   Particle(PVector _pos, PVector _velocity, float _maxSpeed, float _weight, float _size, color _color, float _KB, float _KD)
@@ -27,7 +32,8 @@ class Particle
     // Priodidades de la bandada de pajaros. Cuanto mas cerca de 1, mayor priodidad tendra
     KB = _KB; // Priodidad de seguir a la bandada
     KD = _KD; // Prioridad de seguir al objetivo
-    KC = 3.5f; // Prioridad de evitar colisiones
+    KC = 6f; // Prioridad de evitar colisiones
+    dampingForce = 6;
   }
 
   void Move(PVector _destPos, CollisionObj[] _colliders)
@@ -48,24 +54,55 @@ class Particle
     strenght.y = KD * dest.y + KB * flock.y + KC * collisionObject.y;
     strenght.z = KD * dest.z + KB * flock.z + KC * collisionObject.z;
 
+    //Calculamos cual es la velocidad de las fuerzas que mueven las particulas
+    float totalSpeed = KD + KB;
+    //Aplicamos la friccion (damping)
+    strenght.x += -dampingForce * totalSpeed;
+    strenght.y += -dampingForce * totalSpeed;
+    strenght.z += -dampingForce * totalSpeed;
+
+
     accel.x = strenght.x/weight;
     accel.y = strenght.y/weight;
     accel.z = strenght.z/weight;
 
+    switch (currentSolver) 
+    {
+      case Solver.EULER:
+        EulerSolver();
+        break;
+      case Solver.VERLET:
+        VerletSolver();
+        break;
+      default :
+        break;	  
+    }
+
+    
+  }
+
+  void EulerSolver()
+  {
     vel.x += accel.x * deltaTime;
     vel.y += accel.y * deltaTime;
     vel.z += accel.z * deltaTime;
 
-    if (vel.x > maxSpeed)
-      vel.x = maxSpeed;
-    if (vel.y > maxSpeed)
-      vel.y = maxSpeed;
-    if (vel.z > maxSpeed)
-      vel.z = maxSpeed;
-
     pos.x = pos.x + vel.x * deltaTime;
     pos.y = pos.y + vel.y * deltaTime;
     pos.z = pos.z + vel.z * deltaTime;
+
+  }
+
+  void VerletSolver(PVector _accel)
+  {
+    PVector lastPos = new PVector(0,0);  
+    lastPos = pos;
+    //Hacemos la formula del solver de verlet que es, pos = pos*2 - verletLastPos + _accel * (deltaTime * 2 (delta al cuadrado)) 
+   posicion = new PVector(pos.x * 2 - verletLastPos.x + _accel.x * (deltaTime * 2) // Esta es la X
+                        , pos.y * 2 - verletLastPos.y + _accel.y * (deltaTime * 2) // Esta la Y
+                        , pos.z * 2 - verletLastPos.z + _accel.z * (deltaTime * 2)); // Esta es la Z
+    verletLastPos = lastPos;
+
   }
 
   PVector CheckCollision(CollisionObj[] _colliders)

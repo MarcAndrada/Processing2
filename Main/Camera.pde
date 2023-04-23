@@ -1,3 +1,14 @@
+boolean camMovingForward = false;
+boolean camMovingBack = false;
+boolean camMovingLeft = false;
+boolean camMovingRight = false;
+boolean camMovingUp = false;
+boolean camMovingDown = false;
+boolean camRotatingUp = false;
+boolean camRotatingDown = false;
+boolean camRotatingLeft = false;
+boolean camRotatingRight = false;
+
 void CameraBehaviour() {
 
   //Variables de velocidad de movimiento y de rotacion de la cammara
@@ -8,44 +19,42 @@ void CameraBehaviour() {
   text("Flecha : [LEFT],[RIGHT] : Mirar Izquierda/Derecha", 10, 35);
   text("[W],[S] : Moverse Adelante/Atras", 10, 50);
   text("[A],[D] : Moverse Iquierda/Derecha", 10, 65 );
-  text("[Q],[E] : Moverse Arriba/Abajo", 10, 80 );
-
-  if ( !keyPressed ) return;
+  text("[Q],[E] : Moverse Abajo/Arriba", 10, 80 );
 
   PMatrix3D M = new PMatrix3D();
 
-  if ( key == 'w' ) {
+  if (camMovingForward) {
     M.translate( 0, 0, camSpeed );
   }
 
-  if ( key == 's' ) {
+  if (camMovingBack) {
     M.translate( 0, 0, -camSpeed );
   }
 
-  if ( key == 'a' ) {
+  if (camMovingLeft) {
     M.translate( camSpeed, 0, 0 );
   }
 
-  if ( key == 'd' ) {
+  if (camMovingRight) {
     M.translate( -camSpeed, 0, 0 );
   }
-  if ( key == 'q' ) {
+  if (camMovingDown) {
     M.translate( 0, camSpeed, 0 );
   }
-  if ( key == 'e' ) {
+  if (camMovingUp) {
     M.translate( 0, -camSpeed, 0 );
   }
 
-  if ( keyCode == PConstants.UP ) {
+  if (camRotatingUp) {
     M.rotateX(camRotSpeed);
   }
-  if ( keyCode == PConstants.DOWN ) {
+  if (camRotatingDown) {
     M.rotateX(-camRotSpeed);
   }
-  if ( keyCode == PConstants.RIGHT ) {
+  if (camRotatingRight) {
     M.rotateY(camRotSpeed);
   }
-  if ( keyCode == PConstants.LEFT ) {
+  if (camRotatingLeft) {
     M.rotateY(-camRotSpeed);
   }
 

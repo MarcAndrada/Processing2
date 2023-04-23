@@ -7,6 +7,8 @@ float deltaTime = 0.04;
 PVector posDest;
 float flockDestinyOffset = 30;
 
+enum Solver{EULER, VERLET};
+Solver currentSolver = Solver.EULER;
 //SETUP FUNCTIONS
 void setup()
 {
@@ -175,3 +177,12 @@ PVector FlockCenter()
 
   return result;
 }
+
+
+
+void keyPressed()
+{
+  
+
+}
+
