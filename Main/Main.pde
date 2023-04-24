@@ -1,4 +1,4 @@
-int avatarNum = 7;
+int avatarNum = 15;
 int collidersNum = 10;
 Particle[] particleArr;
 Particle leader;
@@ -11,7 +11,6 @@ boolean isVerlet = false;
 //SETUP FUNCTIONS
 void setup()
 {
-  //size(2000, 2000, P3D);
   fullScreen(P3D);
   posDest = new PVector(random(1000), random(1000), random(1000));
 
@@ -21,31 +20,22 @@ void setup()
 
 void InitializeParticles()
 {
-  color[] colorArr;
-
   particleArr = new Particle[avatarNum];
-  colorArr = new color[avatarNum];
-  colorArr[0] = color(255, 0, 0); //Rojo
-  colorArr[1] = color(0, 255, 0); //Verde
-  colorArr[2] = color(0, 0, 255); //Azul
-  colorArr[3] = color(255, 0, 255); //Morado
-  colorArr[4] = color(255, 255, 0); //Amarillo
-  colorArr[5] = color(0, 255, 255); //Azul Clarito
-  colorArr[6] = color(255, 255, 255); //Blanco
+
 
   //Le seteamos los valores al lider
-  particleArr[0] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), 5f, 60f, colorArr[0], 0.1f, 10, true);
+  particleArr[0] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), 5f, 60f, color(255, 0, 0), 0.1f, 10, true);
   leader = particleArr[0];
 
   for (int i = 1; i < avatarNum; i++)
   {
     //Inicializamos las particulas que siguen al lider
     //Primero les generamos la fuerza de las intenciones de forma aleatoria
-    float randomKB = random(4, 10);
-    float randomKD = random(4, 10);
+    float randomKB = random(3, 10);
+    float randomKD = random(3, 10);
     println(i + " ---- KB = " + randomKB + " y el KD = " + randomKD);
     //Y creamos cada particula con sus valores
-    particleArr[i] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), random(0.4f, 1.2f), 30f, colorArr[i], randomKB, randomKD, false);
+    particleArr[i] = new Particle(new PVector(random(1000), random(1000), random(1000)), new PVector(), random(0.4f, 1.2f), 30f, color(random(255),random(255),random(255)), randomKB, randomKD, false);
   }
 }
 
@@ -119,7 +109,6 @@ void DrawDest(PVector _dir)
   box(60);
   popMatrix();
 }
-
 void DrawScenari(PVector _dir)
 {
   strokeWeight(1);
@@ -135,7 +124,6 @@ void DrawScenari(PVector _dir)
   }
   popMatrix();
 }
-
 void DrawUI()
 {
   //Dibujamos un texto con los Controles
@@ -172,7 +160,6 @@ PVector UnitaryVector(PVector start, PVector end)
 
   return result;
 }
-
 PVector FlockCenter()
 {
   PVector result;
@@ -288,6 +275,10 @@ void keyReleased()
     if (isVerlet)
     {
       isVerlet = false;
+      for (int i = 0; i < avatarNum; i++)
+      {
+        particleArr[i].KC = -200;
+      }
     } 
     else
     {
@@ -295,6 +286,7 @@ void keyReleased()
       for (int i = 0; i < avatarNum; i++)
       {
         particleArr[i].verletLastPos = particleArr[i].pos;
+        particleArr[i].KC = -100;
       }
     }
   }

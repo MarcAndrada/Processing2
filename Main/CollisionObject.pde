@@ -17,7 +17,8 @@ class CollisionObj
   {
     pushMatrix();
     fill(c_color);
-    noStroke();
+    strokeWeight(1);
+    stroke(0,0,0);
     translate(pos.x, pos.y, pos.z);
     sphere(size);
     popMatrix();

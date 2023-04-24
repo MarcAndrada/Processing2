@@ -1,4 +1,4 @@
-class Particle
+class Particle //<>//
 {
   PVector pos;
   PVector vel;
@@ -21,7 +21,7 @@ class Particle
 
   boolean isLeader;
 
-  
+
   Particle(PVector _pos, PVector _velocity, float _weight, float _size, color _color, float _KB, float _KD, boolean _isLeader)
   {
     pos =_pos;
@@ -35,24 +35,21 @@ class Particle
     // Priodidades de la bandada de pajaros. Cuanto mas cerca de 1, mayor priodidad tendra
     KB = _KB; // Priodidad de seguir a la bandada
     KD = _KD; // Prioridad de seguir al objetivo
-    KC = 200; // Prioridad de evitar colisiones
+    KC = -200; // Prioridad de evitar colisiones
     dampingForce = 0.2f;
   }
 
   void Move(PVector _destPos)
   {
-    
 
 
-    if(!isVerlet)
+
+    if (!isVerlet)
     {
       EulerSolver(_destPos);
-    }else{
+    } else {
       VerletSolver(_destPos);
     }
-
-
-    
   }
 
   void EulerSolver(PVector _destPos)
@@ -67,11 +64,16 @@ class Particle
 
     dest = UnitaryVector(pos, _destPos);
     flock = UnitaryVector(pos, FlockCenter());
-    collisionObject = UnitaryVector(pos, collisionObject);
+    PVector unitaryCollObj = UnitaryVector(pos, collisionObject);
 
-    strenght.x = KD * dest.x + KB * flock.x + KC * collisionObject.x;
-    strenght.y = KD * dest.y + KB * flock.y + KC * collisionObject.y;
-    strenght.z = KD * dest.z + KB * flock.z + KC * collisionObject.z;
+    if (collisionObject.x == 0 && collisionObject.y == 0 && collisionObject.z == 0)
+    {
+      unitaryCollObj = new PVector(0, 0, 0);
+    }
+
+    strenght.x = KD * dest.x + KB * flock.x + KC * unitaryCollObj.x;
+    strenght.y = KD * dest.y + KB * flock.y + KC * unitaryCollObj.y;
+    strenght.z = KD * dest.z + KB * flock.z + KC * unitaryCollObj.z;
 
     //Aplicamos la friccion (damping)
     strenght.x += -dampingForce * vel.x;
@@ -91,7 +93,6 @@ class Particle
     pos.x = pos.x + vel.x * deltaTime;
     pos.y = pos.y + vel.y * deltaTime;
     pos.z = pos.z + vel.z * deltaTime;
-
   }
 
   void VerletSolver(PVector _destPos)
@@ -106,11 +107,16 @@ class Particle
 
     dest = UnitaryVector(pos, _destPos);
     flock = UnitaryVector(pos, FlockCenter());
-    collisionObject = UnitaryVector(pos, collisionObject);
+    PVector unitaryCollObj = UnitaryVector(pos, collisionObject);
 
-    strenght.x = KD * dest.x + KB * flock.x + KC * collisionObject.x;
-    strenght.y = KD * dest.y + KB * flock.y + KC * collisionObject.y;
-    strenght.z = KD * dest.z + KB * flock.z + KC * collisionObject.z;
+    if (collisionObject.x == 0 && collisionObject.y == 0 && collisionObject.z == 0)
+    {
+      unitaryCollObj = new PVector(0, 0, 0);
+    }
+
+    strenght.x = KD * dest.x + KB * flock.x + KC * unitaryCollObj.x;
+    strenght.y = KD * dest.y + KB * flock.y + KC * unitaryCollObj.y;
+    strenght.z = KD * dest.z + KB * flock.z + KC * unitaryCollObj.z;
 
     //Aplicamos la friccion (damping)
     strenght.x += -dampingForce * accel.x * 2;
@@ -122,31 +128,31 @@ class Particle
     accel.z = strenght.z/weight;
 
 
-    PVector lastPos = new PVector(0,0,0);  
+    PVector lastPos = new PVector(0, 0, 0);
     lastPos = pos;
-    //Hacemos la formula del solver de verlet que es, pos = pos*2 - verletLastPos + _accel * (deltaTime * deltaTime (delta al cuadrado)) 
+    //Hacemos la formula del solver de verlet que es, pos = pos*2 - verletLastPos + _accel * (deltaTime * deltaTime (delta al cuadrado))
     pos = new PVector(pos.x * 2 - verletLastPos.x + accel.x * (deltaTime * deltaTime) // Esta es la X
-                        , pos.y * 2 - verletLastPos.y + accel.y * (deltaTime * deltaTime) // Esta la Y
-                        , pos.z * 2 - verletLastPos.z + accel.z * (deltaTime * deltaTime)); // Esta es la Z
+      , pos.y * 2 - verletLastPos.y + accel.y * (deltaTime * deltaTime) // Esta la Y
+      , pos.z * 2 - verletLastPos.z + accel.z * (deltaTime * deltaTime)); // Esta es la Z
 
-    verletLastPos = lastPos;
-
+    verletLastPos = lastPos; //<>//
   }
 
   PVector CheckCollision()
   {
-    if(!isLeader)
-    {    
-      // for(int i = 0; i < particleArr.length; i++)
-      // {
-      //   if (particleArr[i] != this && isColliding(particleArr[i].pos, particleArr[i].size)) //Si esta chocando con algo
-      //   {
-      //     //Devolverle la posicion de el objeto encontrado
-      //     return particleArr[i].pos;
-      //   }
-      // }
+
+    if (!isLeader)
+    {
+       for(int i = 0; i < particleArr.length; i++)
+       {
+         if (particleArr[i] != this && isColliding(particleArr[i].pos, particleArr[i].size)) //Si esta chocando con algo
+         {
+           //Devolverle la posicion de el objeto encontrado
+           return particleArr[i].pos;
+         }
+       }
     }
-    
+
     for (int i = 0; i < collidersArr.length; i++)
     {
       if (isColliding(collidersArr[i].pos, collidersArr[i].size)) //Si esta chocando con algo
@@ -155,8 +161,8 @@ class Particle
         return collidersArr[i].pos;
       }
     }
-    
-   
+
+
 
     //Si no esta tocando nada devuelve un Vector 0
     return new PVector(0, 0, 0);
@@ -177,7 +183,6 @@ class Particle
     PVector coso = new PVector(pos.x - _pos.x, pos.y - _pos.y, pos.z - _pos.z);
 
     return sqrt(coso.x * coso.x + coso.y * coso.y + coso.z * coso.z);
-
   }
 
   void Draw()
