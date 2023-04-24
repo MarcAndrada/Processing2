@@ -1,3 +1,9 @@
+Miembros del grupo:
+
+- Santiago Ruiz
+- Marc Andrada
+
+
 División del trabajo:
 
 El trabajo de ha dividido de manera que Marc Andrada se ha encargado de la estructura del codigo, además de ser el corrector del mismo.
@@ -15,10 +21,10 @@ Guia:
 				- E: Arriba
 - Tecla 'V' para cambiar de solver.
 
-En cuanto al ejecutado:
+En cuanto a la ejecucion:
 
-Hay un elemento cubico, que es el punto al que se dirige el cumulo de bolas. Este cambia de posición de manera aleatrio dentro del espacio.
+Hay un cubo, la posicion de destino al que se dirige la bandada. Este cambia de posición de manera aleatrio dentro del espacio.
  
-Hay una bola roja más grande que el resto, está hace de lider y es la que guia al resto.
-Las bolas más pequeñas siguen al lider y evitan colisionar entre ellas.
-Las bolas estaticas son obstaculos que el resto de bolas tendrán que evitar.
+Hay una esfera roja más grande que el resto, está hace de lider y es la que guia al resto.
+Las esferas más pequeñas son la bandada que siguen al lider y evitan colisionar entre ellas.
+Las esferas que tienen la malla pintada son obstaculos, que las demas particulas evitaran.
