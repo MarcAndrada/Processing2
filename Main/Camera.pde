@@ -16,6 +16,7 @@ void CameraBehaviour() {
 
   PMatrix3D M = new PMatrix3D();
 
+  //Segun el input que se este presionando moveremos la matriz creada anteriormente hacia esa direccion
   if (camMovingForward) {
     M.translate( 0, 0, camSpeed );
   }
@@ -51,11 +52,11 @@ void CameraBehaviour() {
     M.rotateY(-camRotSpeed);
   }
 
-  // Editamos la matriz de la camara
+  // Creamos otra variable donde juntaremos el movimiento hecho con los inputs con la matriz de la camara
   PMatrix3D C = ((PGraphicsOpenGL)(g)).camera.get(); // Copiamos la matriz de la camara para editarla desde una variable
   C.preApply(M);
 
-  // Corregimos la matriz papara definir el vector de arriba (0,1,0)
+  //Invertimos la matriz para definir correctamente el vector de arriba (0,1,0)
   C.invert();
 
   float ex = C.m03;
@@ -64,6 +65,7 @@ void CameraBehaviour() {
   float cx = -C.m02 + ex;
   float cy = -C.m12 + ey;
   float cz = -C.m22 + ez;
-
+  
+  //Aplicamos los cambios en la camara
   camera( ex, ey, ez, cx, cy, cz, 0, 1, 0 );
 }

@@ -1,5 +1,6 @@
 class CollisionObj
 {
+  //Los obstaculos son muy simples, simplemente tendremos una posicion donde esten ubicados, tamanyo y color
   PVector pos;
   float size;
   color c_color;

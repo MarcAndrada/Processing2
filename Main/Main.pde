@@ -41,6 +41,7 @@ void InitializeParticles()
 
 void InitializeColliders()
 {
+  //Inicializamos las colisiones que tendremos dandoles valores random
   collidersArr = new CollisionObj[collidersNum];
   for (int i = 0; i < collidersNum; i++)
   {
@@ -56,6 +57,7 @@ void draw()
   background(50);
 
   CheckIfFlockIsInCenter();
+  DrawScenari(posDest);
   DrawDest(posDest);
   CollidersBehaviour();
   AvatarBehaviour();
@@ -65,17 +67,19 @@ void draw()
 
 void CheckIfFlockIsInCenter()
 {
+  //Comprobamos que si la bandada esta dentro de un margen cerca del destino 
   if (FlockCenter().x - posDest.x <= flockDestinyOffset && FlockCenter().x - posDest.x >= -flockDestinyOffset
     && FlockCenter().y - posDest.y <= flockDestinyOffset && FlockCenter().y - posDest.y >= -flockDestinyOffset
     && FlockCenter().z - posDest.z <= flockDestinyOffset && FlockCenter().z - posDest.z >= -flockDestinyOffset)
   {
-    //Generar una nueva posicion para el destino
+    //Generamos una nueva posicion para el destino
     posDest = new PVector(random(0, 1000), random(0, 1000), 100);
   }
 }
 
 void CollidersBehaviour()
 {
+  //Pintamos todos los colliders
   for (int i = 0; i < collidersNum; i++)
   {
     collidersArr[i].Draw();
@@ -86,6 +90,9 @@ void AvatarBehaviour()
 {
   for (int i = 0; i < avatarNum; i++)
   {
+    //Primero comprobamos si es la particula lider o no
+    //En caso de que lo sea haremos que su destino sea la posicion de destino
+    //Si no hacemos que su destino sea el lider
     if (particleArr[i].isLeader)
     {
       particleArr[i].Move(posDest);
@@ -94,39 +101,48 @@ void AvatarBehaviour()
       particleArr[i].Move(leader.pos);
     }
 
+    //Dibujamos las particulas
     particleArr[i].Draw();
   }
 }
 
 void DrawDest(PVector _dir)
 {
-  DrawScenari(_dir);
+  //Definimos como se vera el destino
   strokeWeight(4);
   stroke(0);
   fill(255);
+  //Hacemos un push en la matriz para volver atras despues de mover el objeto destino a su posicion
   pushMatrix();
   translate(_dir.x, _dir.y, _dir.z);
   box(60);
+  //Hacemos el POP para volver hacia atras
   popMatrix();
 }
 void DrawScenari(PVector _dir)
 {
+  //Definimos como se vera el escenario
   strokeWeight(1);
   stroke(255);
+    //Hacemos un push en la matriz para volver atras despues dibujar todo el mapa
   pushMatrix();
+  //El escenario estara posicionado en funcion del destino
   translate(0, _dir.y, 0);
-
+  //Entoces dibujaremos una cuadricula debajo del punto de destino
+  //En este lo que haremos sera con un tamanyo maximo dibujaremos distintas lineas y las moveremos en x o z en cada itineracion del bucle
   for (int x=-2000; x<=2000; x+=50) {
     line( x, 100, -2000, x, 100, 2000 );
   }
   for (int z=-2000; z<=2000; z+=50) {
     line( -2000, 100, z, 2000, 100, z );
   }
+  //Hacemos el POP para volver hacia atras
   popMatrix();
 }
 void DrawUI()
 {
-  //Dibujamos un texto con los Controles
+  //Dibujamos los textos con los Controles
+  fill(255);
   text("Flecha : [ARRIBA],[ABAJO] : Mirar Arriba/Abajo", 10, 20);
   text("Flecha : [LEFT],[RIGHT] : Mirar Izquierda/Derecha", 10, 35);
   text("[W],[S] : Moverse Adelante/Atras", 10, 50);
@@ -140,6 +156,7 @@ void DrawUI()
   {
     text("Solver actual : Euler", 10, 110);
   }
+
 }
 
 //MATH FUNCTIONS
@@ -184,6 +201,8 @@ PVector FlockCenter()
 
 void keyPressed()
 {
+  //Comprobamos la entrada de todos los inputs
+
   if ( key == 'w' ) {
     camMovingForward = true;
   }
@@ -229,6 +248,8 @@ void keyPressed()
 
 void keyReleased()
 {
+  //Comprobamos cuando soltamos todos los inputs
+
   if ( key == 'w' ) {
     camMovingForward = false;
   }
